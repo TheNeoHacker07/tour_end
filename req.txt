@@ -1,0 +1,103 @@
+djangorestframework
+djangorestframework-simplejwt
+psycopg2-binary
+python_decouple
+pillow
+drf-yasg
+django-cors-headers
+redis
+celery
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class TourViewSet(ViewSet):
+    tour_model = Tour.objects.all()
+    permission_classes = [AllowAny]
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TourFilter
+
+    def get_object(self, pk):
+        try:
+            return get_object_or_404(self.tour_model, pk)
+        except:
+            print('error')
+
+
+    def list(self, request):
+        serializer = TourSerializer(self.tour_model, many=True)
+        return Response(serializer.data)
+    
+    def retrieve(self, request, pk=None):
+        tour = self.get_object(pk)
+        serializer = TourSerializer(tour)
+        return Response(serializer.data)
+    
+
+class CarViewSet(ViewSet):
+    car_model = Car.objects.all()
+    permission_classes = [AllowAny]
+
+    def get_object(self, pk):
+        try:
+            return get_object_or_404(self.car_model, pk)
+        except Exception as error:
+            print(error)
+
+    def list(self, request):
+        serializer = CarSerializer(self.car_model, many=True)
+        
+        return Response(serializer.data)
+
+    
+    def retrieve(self, request, pk=None):
+        car = self.get_object(pk)
+        serializer = CarSerializer(car)
+        return Response(serializer.data)
+    
+    
+    
+class BookignTour(ViewSet):
+    booking = Booking.objects.all()
+
+    def get_object(self, pk):
+        try:
+            return get_object_or_404(self.booking, pk)
+        except:
+            print('error')
+
+    def create(self, request):
+        serializer = BookingSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data)
+
+    def update(self, request, pk=None):
+        book_obj = self.get_object(pk)
+        serializer = BookingSerializer(book_obj, data=request.data, partial=False)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data)
+
+    def partial_update(self, request, pk=None):
+        book_obj = self.get_object(pk)
+        serializer = BookingSerializer(book_obj, data=request.data, partial=False)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data)
+    
+    def destroy(self, request, pk=None):
+        book_obj = self.get_object(pk)
+        book_obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
