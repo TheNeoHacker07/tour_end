@@ -68,12 +68,10 @@ class Region(models.Model):
 
 class Tour(models.Model):
     name = models.CharField(max_length=500, default='',verbose_name='имя')
-    price = models.DecimalField(decimal_places=2,blank=True, max_digits=10,verbose_name='цена')
+    price = models.DecimalField(decimal_places=2,null=True, blank=True, max_digits=10,verbose_name='цена')
     # car = models.OneToOneField(Car, on_delete=models.CASCADE)
     
     is_active = models.BooleanField(default=False,verbose_name='активен')
-    start_place = models.CharField(max_length=20,verbose_name='начала место')
-    end_place = models.CharField(max_length=20,verbose_name='конец место')
     tour_type = models.ForeignKey(TourType, on_delete=models.CASCADE,verbose_name='тип тура')
     themes = models.ForeignKey(TourThemes, on_delete=models.CASCADE,verbose_name='тема')
     group_detail = models.ForeignKey(TourGroupDetail,on_delete=models.CASCADE,verbose_name='детали группы')
